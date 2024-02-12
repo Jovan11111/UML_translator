@@ -9,10 +9,10 @@ if __name__ == '__main__':
     translator = Translator(JSONParser(), JavaGenerator())
 
     # Translate UML file to Java
-    translator.translate("test.mdj")
+    translator.translate("test2.mdj")
 
     # Switch to C++ code generation
     translator.set_code_generator(CppGenerator())
 
     # Translate UML file to C++
-    translator.translate("test.mdj")
+    translator.translate("test2.mdj")

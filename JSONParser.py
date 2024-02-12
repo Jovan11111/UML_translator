@@ -55,8 +55,19 @@ class JSONParser:
                                     staticAttribute = False
                                     if attribute.get("isStatic", False):
                                         staticAttribute = True
+                                    attributeType = ""
+                                    if isinstance(attribute["type"], str):
+                                        attributeType = attribute["type"]
+                                    else:
+                                        attributeType = attribute["type"]["$ref"]
+                                        for oel1 in packageElement["ownedElements"]:
+                                            # Looking for the class that has the same id as the target
+                                            if oel1["_type"] == "UMLClass" and oel1["_id"] == attributeType:
+                                                attributeType = oel1["name"]
+                                                break
+
                                     attributes.append(
-                                        Attribute(attribute["name"], attribute["type"], attribute.get("visibility"),
+                                        Attribute(attribute["name"], attributeType, attribute.get("visibility"),
                                                   staticAttribute))
                                 # Parsing operations and encapsulating them
                                 for operation in classElement.get("operations", []):
@@ -71,10 +82,30 @@ class JSONParser:
                                         staticOperation = True
                                     for parameter in operation.get("parameters", []):
                                         if parameter.get("direction") == "return":
-                                            ret = parameter["type"]
+                                            parameterType = ""
+                                            if isinstance(parameter["type"], str):
+                                                parameterType = parameter["type"]
+                                            else:
+                                                parameterType = parameter["type"]["$ref"]
+                                                for oel1 in packageElement["ownedElements"]:
+                                                    # Looking for the class that has the same id as the target
+                                                    if oel1["_type"] == "UMLClass" and oel1["_id"] == parameterType:
+                                                        parameterType = oel1["name"]
+                                                        break
+                                            ret = parameterType
                                             retExists = True
                                         else:
-                                            parameters.append(Parameter(parameter["name"], parameter["type"]))
+                                            parameterType = ""
+                                            if isinstance(parameter["type"], str):
+                                                parameterType = parameter["type"]
+                                            else:
+                                                parameterType = parameter["type"]["$ref"]
+                                                for oel1 in packageElement["ownedElements"]:
+                                                    # Looking for the class that has the same id as the target
+                                                    if oel1["_type"] == "UMLClass" and oel1["_id"] == parameterType:
+                                                        parameterType = oel1["name"]
+                                                        break
+                                            parameters.append(Parameter(parameter["name"], parameterType))
                                     # If there is no return parameter in parameters, then the return type is void
                                     if not retExists:
                                         ret = "void"

@@ -1,3 +1,5 @@
+import os
+
 class Translator:
     _instance = None  # Class attribute to hold the single instance
 
